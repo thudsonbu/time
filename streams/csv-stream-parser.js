@@ -3,7 +3,6 @@ const Transform = require('stream').Transform;
 
 class CSVStreamParser extends Transform {
   constructor( options ) {
-    // object mode used as each column will be its own property on the object
     super({ ...options, objectMode: true });
 
     this.tail = '';
@@ -29,9 +28,6 @@ class CSVStreamParser extends Transform {
       if ( line.length ) {
         const object = {};
         const datum = line.split(',');
-
-        console.log( this.properties );
-        console.log( datum );
 
         if ( datum.length > this.properties.length ) {
           const msg = 'Invalid csv file, a record value likely contains a comma'; // eslint-disable-line
