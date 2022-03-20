@@ -1,0 +1,28 @@
+{
+  "devDependencies": {
+    "@starryinternet/eslint-config-starry": "10.4.0"
+  },
+  "name": "time",
+  "version": "0.0.0",
+  "description": "time logs analysis",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thudsonbu/time.git"
+  },
+  "keywords": [
+    "streams",
+    "data-analysis",
+    "node",
+    "d3"
+  ],
+  "author": "thudsonbu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thudsonbu/time/issues"
+  },
+  "homepage": "https://github.com/thudsonbu/time#readme"
+}
