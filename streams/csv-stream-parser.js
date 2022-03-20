@@ -1,15 +1,13 @@
 const Transform       = require('stream').Transform;
 const stringSafeSplit = require('../util/string-safe-split');
 
-class CSVStreamParser extends Transform {
-  constructor( options ) {
-    super({ ...options, objectMode: true });
+function CSVStreamParser() {
+  Transform.call( this, { objectMode: true } );
 
-    this.tail = '';
-    this.properties = [];
-  }
+  this.tail = '';
+  this.properties = [];
 
-  _transform( chunk, encoding, callback ) {
+  this._transform = function _transform( chunk, encoding, callback ) {
     const cleanCut = chunk.endsWith('\n');
     const lines    = ( this.tail + chunk ).split('\r\n');
 
@@ -22,7 +20,7 @@ class CSVStreamParser extends Transform {
     // parse properties/headers
     if ( !this.properties.length && lines.length > 0 ) {
 
-      // string safe split takes in to account a potential comma in a value
+      // string safe split takes into account a potential comma in a value
       this.properties = stringSafeSplit( lines.shift(), ',' );
     }
 
@@ -42,11 +40,13 @@ class CSVStreamParser extends Transform {
     });
 
     callback();
-  }
+  };
 
-  _flush( callback ) {
+  this._flush = function _flush( callback ) {
     callback();
-  }
+  };
 }
+
+CSVStreamParser.prototype = Object.create( Transform.prototype );
 
 module.exports = CSVStreamParser;

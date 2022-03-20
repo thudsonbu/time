@@ -1,35 +1,33 @@
 const Transform = require('stream').Transform;
 
-class ObjectStreamMetricAggregator extends Transform {
+function ObjectStreamMetricAggregator( propToAgg ) {
+  Transform.call( this, { objectMode: true } );
 
-  constructor( propToAggFunc, opts  ) {
-    super({ ...opts, objectMode: true });
+  this.propToAgg = propToAgg;
 
-    this.propToAggFunc = propToAggFunc;
-    this.aggregations = {};
-  }
-
-  _transform( record, encoding, callback ) {
+  this._transform = function _transform( record, encoding, callback ) {
 
     for ( const [ key, value ] of Object.entries( record ) ) {
 
-      const aggFunc = this.propToAggFunc[ key ] || false;
+      const agg = this.propToAgg[ key ] || false;
 
-      if ( aggFunc ) {
-        this.aggregations[ key ] = this.propToAggFunc[ key ](
-          value,
-          this.aggregations[ key ]
-        );
+      if ( agg ) {
+        agg.operation( value );
       }
     }
 
     callback();
-  }
+  };
 
-  _flush( callback ) {
-    console.log( this.aggregations );
-    callback( this.aggregations );
-  }
+  this._flush = function _flush( callback ) {
+    for ( const agg of Object.values( this.propToAgg ) ) {
+      console.log( agg.getResult() );
+    }
+
+    callback();
+  };
 }
+
+ObjectStreamMetricAggregator.prototype = Object.create( Transform.prototype );
 
 module.exports = ObjectStreamMetricAggregator;
