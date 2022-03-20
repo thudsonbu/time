@@ -1,5 +1,5 @@
-const Transform = require('stream').Transform;
-
+const Transform       = require('stream').Transform;
+const stringSafeSplit = require('../util/string-safe-split');
 
 class CSVStreamParser extends Transform {
   constructor( options ) {
@@ -21,18 +21,17 @@ class CSVStreamParser extends Transform {
 
     // parse properties/headers
     if ( !this.properties.length && lines.length > 0 ) {
-      this.properties = lines.shift().split(',');
+
+      // string safe split takes in to account a potential comma in a value
+      this.properties = stringSafeSplit( lines.shift(), ',' );
     }
 
     lines.forEach( ( line ) => {
       if ( line.length ) {
         const object = {};
-        const datum = line.split(',');
 
-        if ( datum.length > this.properties.length ) {
-          const msg = 'Invalid csv file, a record value likely contains a comma'; // eslint-disable-line
-          throw new Error( msg );
-        }
+        // string safe split takes in to account a potential comma in a value
+        const datum = stringSafeSplit( line, ',' );
 
         for ( let i = 0; i < this.properties.length; i++ ) {
           object[ this.properties[ i ] ] = datum[ i ];
