@@ -1,13 +1,15 @@
 {
   "devDependencies": {
-    "@starryinternet/eslint-config-starry": "10.4.0"
+    "@starryinternet/eslint-config-starry": "10.4.0",
+    "nodemon": "2.0.15"
   },
   "name": "time",
   "version": "0.0.0",
   "description": "time logs analysis",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",

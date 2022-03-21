@@ -1,39 +1,19 @@
-const fs                           = require('fs');
-const path                         = require('path');
-const CSVStreamParser              = require('./streams/csv-stream-parser');
-const ObjectStreamMetricAggregator = require('./streams/object-stream-metric-aggregator'); // eslint-disable-line
-const Aggregator                   = require('./classes/aggregator');
-const pipeline                     = require('stream').pipeline;
+const http = require('http');
+const fs   = require('fs');
 
-const getDataPath = ( filename ) => {
-  return path.join( __dirname, '/data', filename );
-};
+const server = http.createServer( ( req, res ) => {
+  try {
+    const page = fs.readFileSync( __dirname + '/www/' + req.url, 'utf8' );
 
-const csvParser = new CSVStreamParser();
+    res.writeHead( 200, { ContentType: 'text/html' } );
+    res.end( page );
 
-const operation = ( value, state ) => {
-  state.sum = Number( value ) + state.sum || Number( value );
-};
-
-const getResult = ( state ) => {
-  return state.sum;
-};
-
-const sumAgg = new Aggregator({ operation, getResult });
-
-const metricAgg = new ObjectStreamMetricAggregator({
-  Work: sumAgg
+  } catch ( err ) {
+    res.writeHead( 404 );
+    res.end('Not Found');
+  }
 });
 
-pipeline(
-  fs.createReadStream(
-    getDataPath('time-logs.csv'),
-    { encoding: 'utf8' }
-  ),
-  csvParser,
-  metricAgg,
-
-  ( err ) => {
-    console.log( err );
-  }
-);
+server.listen( 3000 ).on( 'listening', () => {
+  console.log('server listening on port 3000');
+});
